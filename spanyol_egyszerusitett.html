@@ -1,0 +1,437 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Spanyol Gyakorló</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="spanyol.css">
+</head>
+<body>
+    <h1>Spanyol Gyakorló</h1>
+    <div id="app"></div>
+
+    <script>
+        const wordData = `
+- abajo · le, lent
+- abandonar · elhagy, felad vmit, lemond vmiről
+- abanico · legyező
+- abeja · méh
+- abierta · nyitás
+- abierto · nyitott, nyitva
+- abono · előfizetés
+- Abou · Abu
+- abrazar · ölel
+- abrazarse · összeölelkeznek
+- abril · április
+- apariencia · látszat, megjelenés
+- apartado · félreeső, távoli
+- apartarse · szétválik
+- apellido · vezetéknév
+- apenas · alig
+- apetito · étvágy
+- aplicar · alkalmaz
+- apodo · gúnynév
+- apostar · fogad, fogadást köt
+- aprecio · értékelés
+- aprender (a) · tanul, megtanul (vmit csinálni)
+- cercano · közeli
+- cerdo · disznó
+- cereales · gabonafélék
+- ceremonia · ünnepség
+- cero · zéró
+- cerrado · zárva
+- cerrar · zár
+- Cervantes Saavedra, Miguel de · [spanyol író]
+- cesar · megszűnik, abbamarad
+- ciego · vak
+- cielo · ég, égbolt
+- cien · száz
+- ciencia · tudomány
+        `;
+
+        const b2_szavak = wordData.split('\n').map(line => {
+            if (line.startsWith('- ') && line.includes('·')) {
+                const pair = line.substring(2);
+                const [spanish, hungarian] = pair.split('·', 2).map(s => s.trim());
+                return { spanyol: spanish, magyar: hungarian };
+            }
+            return null;
+        }).filter(Boolean);
+
+        const nyelvtaniGyakorlatok = [
+    { mondat: "Yo (hablar) __________ español.", megoldas: "hablo" },
+    { mondat: "Tú (comer) __________ en el restaurante.", megoldas: "comes" },
+    { mondat: "Él (vivir) __________ en Madrid.", megoldas: "vive" },
+    { mondat: "Nosotros (cantar) __________ en el coro.", megoldas: "cantamos" },
+    { mondat: "Vosotros (aprender) __________ mucho.", megoldas: "aprendéis" },
+    { mondat: "Ellos (escribir) __________ un libro.", megoldas: "escriben" },
+    { mondat: "Yo no (entender) __________ la pregunta.", megoldas: "entiendo" },
+    { mondat: "¿Tú (querer) __________ ir al cine?", megoldas: "quieres" },
+    { mondat: "Ella (pensar) __________ en sus vacaciones.", megoldas: "piensa" },
+    { mondat: "Nosotros (jugar) __________ al fútbol los sábados.", megoldas: "jugamos" },
+    { mondat: "Vosotros (poder) __________ hacerlo.", megoldas: "podéis" },
+    { mondat: "Ellos (dormir) __________ ocho horas.", megoldas: "duermen" },
+    { mondat: "Yo (hacer) __________ mis deberes.", megoldas: "hago" },
+    { mondat: "Tú (poner) __________ la mesa.", megoldas: "pones" },
+    { mondat: "Él (salir) __________ con sus amigos.", megoldas: "sale" },
+    { mondat: "Nosotros (traer) __________ la comida.", megoldas: "traemos" },
+    { mondat: "Vosotros (ver) __________ la televisión.", megoldas: "veis" },
+    { mondat: "Ellos (saber) __________ la verdad.", megoldas: "saben" },
+    { mondat: "Yo (dar) __________ un regalo a mi amigo.", megoldas: "doy" },
+    { mondat: "Tú (ir) __________ a la escuela.", megoldas: "vas" },
+    { mondat: "Mi madre (estar) __________ cansada.", megoldas: "está" },
+    { mondat: "¡Tú no (escuchar) __________!", megoldas: "escuchas" },
+    { mondat: "¿Dónde (estar) __________ tus padres?", megoldas: "están" },
+    { mondat: "Ellos (estar) __________ de viaje.", megoldas: "están" },
+    { mondat: "¿Por qué Ramón (estar) __________ contigo?", megoldas: "está" },
+    { mondat: "Vosotros no (estar) __________ invitados.", megoldas: "estáis" },
+    { mondat: "Yo nunca (estar) __________ enfadado.", megoldas: "estoy" },
+    { mondat: "Ana y Jacobo (estar) __________ enfermos.", megoldas: "están" },
+    { mondat: "Nosotros (estar) __________ esperando.", megoldas: "estamos" },
+    { mondat: "¿Quién (estar) __________ detrás de ti?", megoldas: "está" },
+    { mondat: "Esta (ser) __________ mi casa.", megoldas: "es" },
+    { mondat: "Yo (ser) __________ el mejor alumno.", megoldas: "soy" },
+    { mondat: "Esos pájaros (ser) __________ gorriones.", megoldas: "son" },
+    { mondat: "Tú y yo (ser) __________ amigos.", megoldas: "somos" },
+    { mondat: "Vosotras (ser) __________ más guapas.", megoldas: "sois" },
+    { mondat: "¿(ser) __________ tú el profesor?", megoldas: "eres" },
+    { mondat: "No. Yo no (ser) __________ el conductor.", megoldas: "soy" },
+    { mondat: "¿Quién (ser) __________ el padrino?", megoldas: "es" },
+    { mondat: "Los delfines (ser) __________ mamíferos.", megoldas: "son" },
+    { mondat: "El sol (ser) __________ una estrella.", megoldas: "es" },
+    { mondat: "¿Cuántos (ser) __________ vosotros?", megoldas: "sois" },
+    { mondat: "Nosotros no (ser) __________ como tú.", megoldas: "somos" },
+    { mondat: "Yo siempre (perder) __________ las llaves.", megoldas: "pierdo" },
+    { mondat: "¿Tú también (venir) __________?", megoldas: "vienes" },
+    { mondat: "¿Quién (ser) __________ el último?", megoldas: "es" },
+    { mondat: "Algunos (decir) __________ mentiras.", megoldas: "dicen" },
+    { mondat: "¿Dónde (estar) __________ mis zapatos?", megoldas: "están" },
+    { mondat: "¿No (oír) __________ tú ese ruido?", megoldas: "oyes" },
+    { mondat: "¿(venir) __________ tú conmigo al cine?", megoldas: "vienes" },
+    { mondat: "Tú me (querer) __________ demasiado.", megoldas: "quieres" },
+    { mondat: "Yo no (tener) __________ tanto dinero.", megoldas: "tengo" },
+    { mondat: "La película (empezar) __________ ahora.", megoldas: "empieza" },
+    { mondat: "¿Cuándo (volver) __________ los niños?", megoldas: "vuelven" },
+    { mondat: "Juana (cocinar) __________ muy bien.", megoldas: "cocina" },
+    { mondat: "¿Cuándo os (ir) __________ de viaje?", megoldas: "vais" },
+    { mondat: "Mis padres (jugar) __________ al tenis.", megoldas: "juegan" },
+    { mondat: "Hoy (hacer) __________ mucho frío.", megoldas: "hace" },
+    { mondat: "Yo (seguir) __________ por este camino.", megoldas: "sigo" },
+    { mondat: "Tú (seguir) __________ viviendo en Lugo.", megoldas: "sigues" },
+    { mondat: "Él (seguir) __________ con su mujer.", megoldas: "sigue" },
+    { mondat: "Clara aún (seguir) __________ soltera.", megoldas: "sigue" },
+    { mondat: "El patito (seguir) __________ a su madre.", megoldas: "sigue" },
+    { mondat: "Nosotros (seguir) __________ esperando.", megoldas: "seguimos" },
+    { mondat: "Vosotros (seguir) __________ bailando.", megoldas: "seguís" },
+    { mondat: "Ellos (seguir) __________ tus huellas.", megoldas: "siguen" },
+    { mondat: "Los pájaros (seguir) __________ en su nido.", megoldas: "siguen" },
+    { mondat: "Yo con (soñar) __________ ser rico.", megoldas: "sueño" },
+    { mondat: "(volver) __________ antes de cinco minutos.", megoldas: "vuelvo" },
+    { mondat: "Hoy no (salir) __________ hasta las seis.", megoldas: "salgo" },
+    { mondat: "No (oír) __________ el ruido de la calle.", megoldas: "oigo" },
+    { mondat: "Aún (seguir) __________ esperando por ella.", megoldas: "sigo" },
+    { mondat: "Yo mi cama al (hacer) __________ levantarme.", megoldas: "hago" },
+    { mondat: "Siempre (ir) __________ andando.", megoldas: "voy" },
+    { mondat: "(sentir) __________ mucho lo que ocurrió.", megoldas: "siento" },
+    { mondat: "Si me subo ahí, me (caer) __________.", megoldas: "caigo" },
+    { mondat: "Creo que no (oler) __________ mal al sudar.", megoldas: "huelo" },
+    { mondat: "Yo (conocer) __________ bien a María.", megoldas: "conozco" },
+    { mondat: "Solo (pedir) __________ un poco de cariño.", megoldas: "pido" },
+    { mondat: "Yo no (valer) __________ para la danza.", megoldas: "valgo" },
+    { mondat: "Hoy (estrenar) __________ mis zapatos nuevos.", megoldas: "estreno" },
+    { mondat: "Siempre (viajar) __________ en clase turista.", megoldas: "viajo" }
+];
+
+
+        const szovegertesGyakorlatok = [
+    {
+        title: "Formularios",
+        text: `Al despertar, vi que la azafata había dejado sobre el brazo de mi asiento el formulario que. Tuve que aguantar, merecidamente, la bronca de mi pareja desesperada porque nos veía durmiendo en el asiento trasero de la furgoneta. Digamos que empezamos a montar “por el tejado” y no había manera… Como a la hora se acercó un vecino`,
+        questions: [
+            {
+                question: "Las preguntas del formulario producen en el protagonista:",
+                options: ["curiosidad.", "indignación.", "angustia."],
+                answer: "angustia."
+            },
+            {
+                question: "De la respuesta que le dio la azafata al protagonista se desprende que:",
+                options: ["ella no comprendió bien la pregunta del hombre.", "la pregunta del hombre le pareció redundante.", "ella creyó que la pregunta era simpática."],
+                answer: "la pregunta del hombre le pareció redundante."
+            },
+            {
+                question: "Antes de dormirse de nuevo el protagonista:",
+                options: ["supo cuándo iba a morir.", "no pudo relajarse.", "determinó la fecha de su muerte."],
+                answer: "no pudo relajarse."
+            },
+            {
+                question: "Cuando se despertó de nuevo el protagonista:",
+                options: ["no se atrevió a revisar el formulario.", "confundió realidad e irrealidad.", "terminó de rellenar el formulario."],
+                answer: "confundió realidad e irrealidad."
+            },
+            {
+                question: "¿Cómo es la vida del protagonista después del viaje?",
+                options: ["Es más interesante.", "Está llena de incertidumbre.", "Es más tranquila."],
+                answer: "Está llena de incertidumbre."
+            }
+        ]
+    },
+    {
+        title: "Historias en un camping",
+        text: `Iba con mi pareja de camping a Conil desde Guadalajara pero llegamos a montar la tienda a las 10 de la noche y tuvimos que utilizar las luces del vehículo, a lo que se sumó un pequeño detalle: era la primera vez. Tuve que aguantar, merecidamente, la bronca de mi pareja desesperada porque nos veía durmiendo en el asiento trasero de la furgoneta. Digamos que empezamos a montar “por el tejado” y no había manera… Como a la hora se acercó un vecino`,
+        questions: [
+            {
+                question: "¿Quién confiesa que no tenía experiencia en campings?",
+                options: ["José Ángel", "Javi", "Lola", "Daniel"],
+                answer: "José Ángel"
+            },
+            {
+                question: "¿Quién expresa que no tuvo en cuenta la climatología para elegir el camping?",
+                options: ["José Ángel", "Javi", "Lola", "Daniel"],
+                answer: "Javi"
+            }
+        ]
+    },
+    {
+        title: "Ignorar las notificaciones del móvil",
+        text: `Poner el teléfono en silencio puede ser un gesto de buena voluntad, de respeto para el resto de la humanidad, y todo un detalle para no contribuir a la contaminación sonora. Sin embargo, a usted y a su precaria atención le va a servir de poco silenciar el móvil. Una vibración muda será suficiente para que su concentración salte por los aires. Ignorar al teléfono supone un escape de atención semejante al de atender esa`,
+        questions: [
+            {
+                question: "El principal factor es que la intermediación entre la ciudadanía y la clase política realizada anteriormente por los medios de comunicación ha quedado atrás.",
+                options: ["Verdadero", "Falso"],
+                answer: "Verdadero"
+            }
+        ]
+    },
+    {
+        title: "Apple y sus nuevas pantallas",
+        text: `Usted va a leer un texto sobre una compañía informática. Después, debe contestar a las preguntas (1-6). Seleccione la respuesta correcta (a / b / c).`,
+        questions: [
+        ]
+    },
+    {
+        title: "El mejor viaje de mi vida",
+        text: `Usted va a leer cuatro textos en los que cuatro personas recuerdan el mejor viaje de su vida. Relacione las preguntas (7-16) con los textos (A, B, C y D).`,
+        questions: [
+        ]
+    },
+    {
+        title: "Twitter y la política",
+        text: `Lea el siguiente texto, del que se han extraído seis fragmentos. A continuación lea los ocho fragmentos propuestos (A-H) y decida en qué lugar del texto (17-22) hay que colocar cada uno de ellos. HAY DOS FRAGMENTOS QUE NO TIENE QUE ELEGIR.`,
+        questions: [
+        ]
+    },
+    {
+        title: "Gramática",
+        text: `Lea el texto y rellene los huecos (23-36) con la opción correcta (a / b / c).`,
+        questions: [
+        ]
+    },
+    {
+        title: "Políticas sociales del gobierno de Chile",
+        text: `Vas a leer un texto sobre las políticas sociales del gobierno de Chile. Después, debes contestar a las preguntas (1 - 5). Selecciona la opción correcta (a / b / c).`,
+        questions: [
+        ]
+    },
+    {
+        title: "Reseñas de libros",
+        text: `Vas a leer cuatro reseñas de libros que hace una lectora en su web. Relaciona los enunciados (6 - 11) con los textos (A, B, C o D).`,
+        questions: [
+        ]
+    },
+    {
+        title: "La música de Bad Bunny",
+        text: `Hace un tiempo la música de Bad Bunny me parecía espantosa. Pero de tanto bailarla, poco a poco empezó a gustarme. No tanto por la melodía –que aún me parece estridente y monótona–, sino por las letras. Mientras seguía las coreografías que mi profesora de baile se inventaba, empecé a prestar atención a lo que decían las canciones.`,
+        questions: [
+        ]
+    }
+];
+
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const app = document.getElementById('app');
+
+            function initMenu() {
+                app.innerHTML = `
+                    <div class="nav">
+                        <button id="szavak-gomb">Szavak</button>
+                        <button id="nyelvtan-gomb">Nyelvtan</button>
+                        <button id="szovegertes-gomb">Szövegértés</button>
+                    </div>
+                    <div id="content"></div>
+                `;
+                setupMenuEventListeners();
+            }
+
+            function setupMenuEventListeners() {
+                document.getElementById('szavak-gomb').addEventListener('click', initSzavak);
+                document.getElementById('nyelvtan-gomb').addEventListener('click', initNyelvtan);
+                document.getElementById('szovegertes-gomb').addEventListener('click', initSzovegertes);
+            }
+
+            function initSzavak() {
+                const content = document.getElementById('content');
+                let jelenlegiSzo = 0;
+
+                function kártyaFrissítése() {
+                    const szo = b2_szavak[jelenlegiSzo];
+                    content.innerHTML = `
+                        <div class="kartya">
+                            <div class="spanyol">${szo.spanyol}</div>
+                            <div class="magyar">${szo.magyar}</div>
+                        </div>
+                        <button id="vissza">Vissza a menübe</button>
+                        <button id="elozo">Előző</button>
+                        <button id="kovetkezo">Következő</button>
+                    `;
+                    document.getElementById('vissza').addEventListener('click', initMenu);
+                    document.getElementById('elozo').addEventListener('click', elozoSzo);
+                    document.getElementById('kovetkezo').addEventListener('click', kovetkezoSzo);
+                }
+
+                function elozoSzo() {
+                    if (jelenlegiSzo > 0) {
+                        jelenlegiSzo--;
+                        kártyaFrissítése();
+                    }
+                }
+
+                function kovetkezoSzo() {
+                    if (jelenlegiSzo < b2_szavak.length - 1) {
+                        jelenlegiSzo++;
+                        kártyaFrissítése();
+                    }
+                }
+
+                kártyaFrissítése();
+            }
+
+            function initNyelvtan() {
+                const content = document.getElementById('content');
+                let jelenlegiGyakorlat = 0;
+
+                function nyelvtanGyakorlatFrissítése() {
+                    const gyakorlat = nyelvtaniGyakorlatok[jelenlegiGyakorlat];
+                    content.innerHTML = `
+                        <div class="nyelvtan-kartya">
+                            <div class="mondat">${gyakorlat.mondat.replace('__________', '<input type="text" id="valasz" placeholder="Írd be a helyes választ">')}</div>
+                            <button id="ellenorzes">Ellenőrzés</button>
+                            <div id="eredmeny"></div>
+                        </div>
+                        <button id="vissza">Vissza a menübe</button>
+                        <button id="elozo-nyelvtan">Előző</button>
+                        <button id="kovetkezo-nyelvtan">Következő</button>
+                    `;
+
+                    document.getElementById('vissza').addEventListener('click', initMenu);
+                    document.getElementById('ellenorzes').addEventListener('click', ellenorzes);
+                    document.getElementById('elozo-nyelvtan').addEventListener('click', elozoGyakorlat);
+                    document.getElementById('kovetkezo-nyelvtan').addEventListener('click', kovetkezoGyakorlat);
+                }
+
+                function ellenorzes() {
+                    const valasz = document.getElementById('valasz').value;
+                    const megoldas = nyelvtaniGyakorlatok[jelenlegiGyakorlat].megoldas;
+                    const eredmenyDiv = document.getElementById('eredmeny');
+
+                    if (valasz.toLowerCase() === megoldas.toLowerCase()) {
+                        eredmenyDiv.innerHTML = "Helyes!";
+                        eredmenyDiv.style.color = "green";
+                    } else {
+                        eredmenyDiv.innerHTML = `Helytelen. A helyes válasz: ${megoldas}`;
+                        eredmenyDiv.style.color = "red";
+                    }
+                }
+
+                function elozoGyakorlat() {
+                    if (jelenlegiGyakorlat > 0) {
+                        jelenlegiGyakorlat--;
+                        nyelvtanGyakorlatFrissítése();
+                    }
+                }
+
+                function kovetkezoGyakorlat() {
+                    if (jelenlegiGyakorlat < nyelvtaniGyakorlatok.length - 1) {
+                        jelenlegiGyakorlat++;
+                        nyelvtanGyakorlatFrissítése();
+                    }
+                }
+                nyelvtanGyakorlatFrissítése();
+            }
+
+            function initSzovegertes() {
+                const content = document.getElementById('content');
+                let jelenlegiGyakorlat = 0;
+
+                function szovegertesGyakorlatFrissítése() {
+                    const gyakorlat = szovegertesGyakorlatok[jelenlegiGyakorlat];
+                    let questionsHtml = '';
+                    gyakorlat.questions.forEach((q, index) => {
+                        let optionsHtml = '';
+                        q.options.forEach(option => {
+                            optionsHtml += `<label><input type="radio" name="q${index}" value="${option}"> ${option}</label><br>`;
+                        });
+                        questionsHtml += `
+                            <div class="question">
+                                <p>${q.question}</p>
+                                ${optionsHtml}
+                            </div>
+                        `;
+                    });
+
+                    content.innerHTML = `
+                        <div class="szovegertes-kartya">
+                            <h3>${gyakorlat.title}</h3>
+                            <div class="szoveg">${gyakorlat.text}</div>
+                            <div class="kerdesek">
+                                ${questionsHtml}
+                            </div>
+                            <button id="vissza">Vissza a menübe</button>
+                            <button id="elozo-szovegertes">Előző</button>
+                            <button id="kovetkezo-szovegertes">Következő</button>
+                            <button id="szovegertes-ellenorzes">Ellenőrzés</button>
+                            <div id="szovegertes-eredmeny"></div>
+                        </div>
+                    `;
+
+                    document.getElementById('vissza').addEventListener('click', initMenu);
+                    document.getElementById('elozo-szovegertes').addEventListener('click', elozoGyakorlat);
+                    document.getElementById('kovetkezo-szovegertes').addEventListener('click', kovetkezoGyakorlat);
+                    document.getElementById('szovegertes-ellenorzes').addEventListener('click', szovegertesEllenorzes);
+                }
+
+                function szovegertesEllenorzes() {
+                    let correctAnswers = 0;
+                    const gyakorlat = szovegertesGyakorlatok[jelenlegiGyakorlat];
+                    gyakorlat.questions.forEach((q, index) => {
+                        const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+                        if (selectedOption && selectedOption.value === q.answer) {
+                            correctAnswers++;
+                        }
+                    });
+
+                    const eredmenyDiv = document.getElementById('szovegertes-eredmeny');
+                    eredmenyDiv.innerHTML = `Eredmény: ${correctAnswers} / ${gyakorlat.questions.length}`;
+                }
+
+                function elozoGyakorlat() {
+                    if (jelenlegiGyakorlat > 0) {
+                        jelenlegiGyakorlat--;
+                        szovegertesGyakorlatFrissítése();
+                    }
+                }
+
+                function kovetkezoGyakorlat() {
+                    if (jelenlegiGyakorlat < szovegertesGyakorlatok.length - 1) {
+                        jelenlegiGyakorlat++;
+                        szovegertesGyakorlatFrissítése();
+                    }
+                }
+
+                szovegertesGyakorlatFrissítése();
+            }
+
+            initMenu();
+        });
+    </script>
+
+</body>
+</html>
